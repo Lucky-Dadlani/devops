@@ -1,0 +1,48 @@
+sudo apt update
+
+sudo apt install openjdk-17-jdk -y
+
+java -version
+
+https://pkg.jenkins.io/
+
+sudo systemctl start jenkins
+
+sudo systemctl enable jenkins
+
+sudo systemctl status jenkins
+
+sudo cat /var/lib/jenkins/secrets/initialAdminPassword
+
+# first allow custom tcp port 8080 by selecting anywhere with ipv4 with all zeros in security groups of that instance
+
+http://your-server-ip(public-ip):8080
+
+wget https://archive.apache.org/dist/maven/maven-3/3.9.6/binaries/apache-maven-3.9.6-bin.tar.gz
+
+sudo tar -xvzf apache-maven-3.9.6-bin.tar.gz -C /opt/
+
+echo 'export M2_HOME=/opt/apache-maven-3.9.6' | sudo tee -a /etc/profile.d/maven.sh
+
+echo 'export PATH=$M2_HOME/bin:$PATH' | sudo tee -a /etc/profile.d/maven.sh
+
+source /etc/profile.d/maven.sh
+
+mvn -version
+
+# next go to jenkins ui there under manage plugins , install maven integration plugin and ansible ,next go to tools
+# there add maven like give name as maven 3.9.6, uncheck install automatically there u type /opt/apache-maven-3.9.6
+# click save
+
+# next create a freestyle job under this give git repo and underbuild steps
+# select Invoke top-level Maven targets next type maven version as Maven 3.9.6 and goals as clean install and save
+
+# create a pipeline job and paste the provided pipeline script
+
+# next run the build, there it will show you the jar file creation
+
+sudo su - jenkins
+
+cd /var/lib/jenkins/.m2/repository/com/mycompany/app/my-app/1.0-SNAPSHOT/
+
+java -jar my-app-1.0-SNAPSHOT.jar

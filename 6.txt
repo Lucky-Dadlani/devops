@@ -1,6 +1,6 @@
 sudo apt update
 
-sudo apt install openjdk-17-jdk -y
+sudo apt install openjdk-21-jdk -y
 
 java -version
 
@@ -30,16 +30,54 @@ source /etc/profile.d/maven.sh
 
 mvn -version
 
-# next go to jenkins ui there under manage plugins , install maven integration plugin and ansible ,next go to tools
-# there add maven like give name as maven 3.9.6, uncheck install automatically there u type /opt/apache-maven-3.9.6
-# click save
+Configure Jenkins
 
-# next create a freestyle job under this give git repo and underbuild steps
-# select Invoke top-level Maven targets next type maven version as Maven 3.9.6 and goals as clean install and save
+Manage Jenkins → Plugins → Available Plugins
+Search: Maven Integration
+Select → Install
 
-# create a pipeline job and paste the provided pipeline script
+Manage Jenkins → Tools → Maven Installations → Add Maven
 
-# next run the build, there it will show you the jar file creation
+Name: Maven-3.9.6
+Install Automatically: Unchecked
+MAVEN_HOME: /opt/apache-maven-3.9.6
+
+Save
+
+
+Create CI Job
+
+Dashboard → New Item
+
+Name: MyMavenCIJob
+Select: Freestyle Project
+OK
+
+Source Code Management → Git
+
+Repository URL:
+https://github.com/mvsanthi123/simple-java-maven-app.git
+
+Branch Specifier:
+*/master
+
+Add Build Step → Invoke top-level Maven targets
+
+Maven Version:
+Maven-3.9.6
+
+Goals:
+clean install
+
+Save
+
+Build Now
+
+Build Number → Console Output
+
+Expected:
+BUILD SUCCESS
+
 
 sudo su - jenkins
 

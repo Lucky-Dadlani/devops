@@ -1,57 +1,135 @@
-sudo apt update
+# ============================================================
+# MASTER MACHINE (EC2-1)
+# Login to the Master EC2 Instance Terminal
+# ============================================================
 
-sudo apt install -y ansible
-
-ansible --version
+sudo apt update && sudo apt install -y ansible && ansible --version
 
 ansible localhost -m ping
 
+
+# ============================================================
+# MASTER MACHINE (EC2-1)
+# Generate SSH Key Pair
+# ============================================================
+
 ssh-keygen
 
-echo "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPKsjwbonxbacDmVOnm9dPaFgxtAmR8AXnQxjHtNPAqZ ubuntu@ip-172-31-42-231" >> ~/.ssh/authorized_keys
+# Press Enter for all prompts
 
-ls -la
+cat ~/.ssh/id_ed25519.pub
 
-cd .ssh
+# Copy the complete output shown
 
-ls
 
-cat [public key]
+# ============================================================
+# NODE MACHINE (EC2-2)
+# Login to the Node EC2 Instance Terminal
+# ============================================================
 
-cd ..
+echo "<MASTER_PUBLIC_KEY>" >> ~/.ssh/authorized_keys
+
+
+# ============================================================
+# MASTER MACHINE (EC2-1)
+# Create Inventory File
+# ============================================================
 
 nano ~/inventory.ini
 
-# add the public ip of node machine and save it
+# Paste the following:
+
 [node_machines]
-3.89.225.137 ansible_ssh_user=ubuntu
+<NODE_PUBLIC_IP> ansible_ssh_user=ubuntu
+
+# Save:
+# CTRL + O
+# Enter
+# CTRL + X
+
+
+# ============================================================
+# MASTER MACHINE (EC2-1)
+# Create Playbook File
+# ============================================================
 
 nano ~/install_package.yml
 
-# add the following content and save it
+# Paste the following:
+
 ---
 - name: Install a package on the node machine
   hosts: node_machines
   become: yes
-
 
   tasks:
     - name: Update apt cache
       apt:
         update_cache: yes
 
-
     - name: Install Nginx
       apt:
         name: nginx
         state: present
 
-ssh ubuntu@node-ip
+# Save:
+# CTRL + O
+# Enter
+# CTRL + X
+
+
+# ============================================================
+# MASTER MACHINE (EC2-1)
+# Verify SSH Access to Node Machine
+# ============================================================
+
+ssh ubuntu@<NODE_PUBLIC_IP>
+
+# If login succeeds, type:
+
+exit
+
+
+# ============================================================
+# MASTER MACHINE (EC2-1)
+# Execute Ansible Playbook
+# ============================================================
 
 ansible-playbook -i ~/inventory.ini ~/install_package.yml
 
-sudo systemctl status
 
-# in aws go to node machine there in security groups allow http 80 port from anywhere ipv4
+# ============================================================
+# NODE MACHINE (EC2-2)
+# Verify Nginx Installation
+# ============================================================
 
-# in browser page type http://node-ip, it will display nginx welcome page
+systemctl status nginx
+
+
+# ============================================================
+# AWS CONSOLE
+# Open Node Machine Security Group
+# ============================================================
+
+# EC2 → Instances → Select Node Machine
+
+# Security → Security Groups → Edit Inbound Rules
+
+# Add Rule:
+# Type: HTTP
+# Port: 80
+# Source: Anywhere IPv4 (0.0.0.0/0)
+
+# Save Rules
+
+
+# ============================================================
+# BROWSER
+# ============================================================
+
+# Open:
+
+http://<NODE_PUBLIC_IP>
+
+# Expected Page:
+# Welcome to nginx!

@@ -4,8 +4,9 @@ sudo yum install java-17-amazon-corretto -y
 
 java -version
 
-sudo dnf install -y java-1.8.0-amazon-corretto
+sudo dnf install -y java-1.8.0-amazon-corretto 
 
 sudo yum install maven -y
 
 mvn -version
+

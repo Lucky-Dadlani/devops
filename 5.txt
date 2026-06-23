@@ -1,0 +1,13 @@
+sudo apt update
+
+sudo apt install openjdk-21-jdk -y
+
+java -version
+
+# Type pkg.jenkins.io in some browser - choose debian-stable - copy paste all the commands
+
+sudo systemctl start jenkins
+
+sudo systemctl enable jenkins
+
+sudo systemctl status jenkins
